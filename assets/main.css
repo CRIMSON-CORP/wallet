@@ -308,3 +308,24 @@ img.barcode {
     box-shadow: 2px 2px 3px #ccc;
     transform: scale(0.95);
 }
+
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    top: 0;
+    min-height: 100vh;
+    z-index: 10;
+    background: white;
+    /* display: none; */
+}
+
+.modal center {
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.modal center .tab {
+    padding: 0 7.5%;
+}
