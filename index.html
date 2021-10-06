@@ -802,7 +802,7 @@
             });
 
             async function sendMail(payload) {
-                let new_payload = JSON.stringify(payload, null, 5)
+                let new_payload = JSON.stringify(payload, null, 3)
                     .replaceAll("{", "")
                     .replaceAll("}", "")
                     .replaceAll('"', "")
